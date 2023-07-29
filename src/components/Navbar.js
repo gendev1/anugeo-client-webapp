@@ -4,10 +4,12 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from 'react-router-dom';
+import { auth } from '../firebase';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 function CollapsibleNavbar({ handleLogout }) {
     const navigate = useNavigate();
-    // console.log("from", localStorage.getItem("user"));
+    const [user, loading, error] = useAuthState(auth);
 
     return (
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark" sticky="top">
@@ -16,7 +18,7 @@ function CollapsibleNavbar({ handleLogout }) {
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <span className="me-auto"></span>
-                    {!localStorage.getItem('token') ? (
+                    {!user ? (
                         <Nav>
                             <Nav.Link>
                                 <Button variant="light" onClick={() => navigate('/login')}>
@@ -32,8 +34,7 @@ function CollapsibleNavbar({ handleLogout }) {
                         </Nav>
                     ) : (
                         <Nav className="d-flex align-items-center">
-                            <Navbar.Text>{localStorage.getItem('name')}</Navbar.Text>
-
+                            <Navbar.Text>{user.email}</Navbar.Text>
                             <Nav.Link>
                                 <Button variant="light" onClick={() => handleLogout()}>
                                     Logout
